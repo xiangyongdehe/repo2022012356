@@ -8,33 +8,31 @@
 ### step 1 Information: Biological/Medical Data
 ### step 2 Analysis: Data clean & Feature Extraction
 * **NGS Data Analysis**
-| Variation                  | Sequencing Methods                      | Bioinformatics Tools                   |
-|----------------------------|-----------------------------------------|----------------------------------------|
-| **Abundance**              | RNA-seq                                | DEGseq2, EdgeR, Cufflinks             |
-| **Splicing**               | RNA-seq                                | rMATs, TOPHAT/Cufflinks                |
-| **APA**                    | RNA-seq/PAT-seq                        | DaPars, APAtrap                       |
-| **Translation**            | Ribo-seq                               | RiboWave, RiboTaper, ORFscore        |
-| **Degradation**            | Degradome-Seq, cfRNA-seq               | sPARTA, dPeak                         |
-| **Modification**           | m6A-seq, MeRIP-seq, miCLIP            | m6aViewer, MeRIP-PF                   |
-| **Structure**              | icSHAPE, SHAPE-map, DMS-seq            | RNAstructure, RNAfold, RME            |
-| **RNA-protein interaction** | HITS-CLIP, PAR-CLIP, iCLIP, eCLIP     | Piranha, PARalyzer, CIMS              |
+Variation | Sequencing Methods | Bioinformatics Tools
+--- | ---| ---
+Abundance | RNA-seq | DEGseq2,EdgeR,Cufflinks
+Splicing | RNA-seq | rMATs,TOPHAT/Cufflinks
+APA | RNA-seq/PAT-seq | DaPars,APAtrap
+Translation | Ribo-seq | RiboWave,RiboTaper,ORFscore
+Degradation | Degradome-Seq,cfRNA-seq | sPARTA,dPeak
+Modification | m6A-seq,MeRIP-seq,miCLIP | m6aViewer,MeRIP-PF
+Structure | icSHAPE,SHAPE-map,DMS-seq | RNAstructure,RNAfold,RME
+RNA-protein interaction | HITS-CLIP,PAR-CLIP,iCLIP,eCLIP | Piranha,PARalyzer,CIMS
 ### step 3 Modeling: Probabilistic Model & Computational Algorithm
 * **Probabilistic Model:**  
   A mathematical framework that uses **probability theory** to represent uncertainty in systems or processes. It describes relationships between random variables through probability distributions (e.g., Bayesian networks, hidden Markov models).  
 * **computational Algorithm:**  
   A **step-by-step procedure** to solve a computational problem or perform a task. It defines a finite sequence of operations to transform inputs into outputs (e.g., sorting algorithms, dynamic programming).
 * **Comparation**
-| Aspect                  | Probabilistic Model                          | Computational Algorithm                 |
-|-------------------------|---------------------------------------------|-----------------------------------------|
-| **Primary Goal**        | Model uncertainty and stochastic relationships | Solve problems efficiently               |
-| **Core Components**     | Random variables, probability distributions   | Steps, loops, conditionals              |
-| **Evaluation**          | Metric                                      | Likelihood, posterior predictive accuracy |
-|                         | Time/space complexity, correctness           |                                         |
-| **Output**              | Type                                        | Probability distributions or confidence scores |
-|                         | Deterministic or approximate solutions       |                                         |
-| **Key Applications**    | Risk assessment, gene prediction, NLP       | Data sorting, optimization, simulations  |
-| **Mathematical Basis**  | Probability theory, statistics               | Discrete mathematics, graph theory      |
-| **Implementation Focus**| Parameter estimation, inference methods      | Code optimization, resource management   |
+  Aspect | Probabilistic Model | Computational Algorithm
+  --- | --- | ---
+  Primary Goal | Model uncertainty and stochastic relationships | Solve problems efficiently
+  Core Components | Random variables, probability distributions | Steps, loops, conditionals
+  Evaluation | Metric Likelihood, posterior predictive accuracy |Time/space complexity, correctness
+  Output | Type Probability distributions or confidence scores | Deterministic or approximate solutions
+  Key Applications | Risk assessment, gene prediction, NLP | Data sorting, optimization, simulations
+  Mathematical Basis | Probability theory, statistics | Discrete mathematics, graph theory
+  Implementation Focus | Parameter estimation, inference methods | Code optimization, resource management
 
   
 # Big Data-driven Science
