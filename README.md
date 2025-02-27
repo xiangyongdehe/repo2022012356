@@ -7,17 +7,17 @@
 ### step 0 Question: Biological/Medical Knowledge
 ### step 1 Information: Biological/Medical Data
 ### step 2 Analysis: Data clean & Feature Extraction
-* **NGS Data Analysis**
-Variation | Sequencing Methods | Bioinformatics Tools
---- | ---| ---
-Abundance | RNA-seq | DEGseq2,EdgeR,Cufflinks
-Splicing | RNA-seq | rMATs,TOPHAT/Cufflinks
-APA | RNA-seq/PAT-seq | DaPars,APAtrap
-Translation | Ribo-seq | RiboWave,RiboTaper,ORFscore
-Degradation | Degradome-Seq,cfRNA-seq | sPARTA,dPeak
-Modification | m6A-seq,MeRIP-seq,miCLIP | m6aViewer,MeRIP-PF
-Structure | icSHAPE,SHAPE-map,DMS-seq | RNAstructure,RNAfold,RME
-RNA-protein interaction | HITS-CLIP,PAR-CLIP,iCLIP,eCLIP | Piranha,PARalyzer,CIMS
+* **NGS Data Analysis**  
+  Variation | Sequencing Methods | Bioinformatics Tools
+  --- | --- | ---
+  Abundance | RNA-seq | DEGseq2,EdgeR,Cufflinks
+  Splicing | RNA-seq | rMATs,TOPHAT/Cufflinks
+  APA | RNA-seq/PAT-seq | DaPars,APAtrap
+  Translation | Ribo-seq | RiboWave,RiboTaper,ORFscore
+  Degradation | Degradome-Seq,cfRNA-seq | sPARTA,dPeak
+  Modification | m6A-seq,MeRIP-seq,miCLIP | m6aViewer,MeRIP-PF
+  Structure | icSHAPE,SHAPE-map,DMS-seq | RNAstructure,RNAfold,RME
+  RNA-protein interaction | HITS-CLIP,PAR-CLIP,iCLIP,eCLIP | Piranha,PARalyzer,CIMS
 ### step 3 Modeling: Probabilistic Model & Computational Algorithm
 * **Probabilistic Model:**  
   A mathematical framework that uses **probability theory** to represent uncertainty in systems or processes. It describes relationships between random variables through probability distributions (e.g., Bayesian networks, hidden Markov models).  
