@@ -19,6 +19,7 @@
   Modification | m6A-seq,MeRIP-seq,miCLIP | m6aViewer,MeRIP-PF
   Structure | icSHAPE,SHAPE-map,DMS-seq | RNAstructure,RNAfold,RME
   RNA-protein interaction | HITS-CLIP,PAR-CLIP,iCLIP,eCLIP | Piranha,PARalyzer,CIMS
+  
 ### step 3 Modeling: Probabilistic Model & Computational Algorithm
 * **Probabilistic Model:**  
   A mathematical framework that uses **probability theory** to represent uncertainty in systems or processes. It describes relationships between random variables through probability distributions (e.g., Bayesian networks, hidden Markov models).  
