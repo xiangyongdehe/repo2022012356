@@ -7,7 +7,8 @@
 ### step 0 Question: Biological/Medical Knowledge
 ### step 1 Information: Biological/Medical Data
 ### step 2 Analysis: Data clean & Feature Extraction
-* **NGS Data Analysis**  
+* **NGS Data Analysis**
+  
   Variation | Sequencing Methods | Bioinformatics Tools
   --- | --- | ---
   Abundance | RNA-seq | DEGseq2,EdgeR,Cufflinks
@@ -24,6 +25,7 @@
 * **computational Algorithm:**  
   A **step-by-step procedure** to solve a computational problem or perform a task. It defines a finite sequence of operations to transform inputs into outputs (e.g., sorting algorithms, dynamic programming).
 * **Comparation**
+  
   Aspect | Probabilistic Model | Computational Algorithm
   --- | --- | ---
   Primary Goal | Model uncertainty and stochastic relationships | Solve problems efficiently
