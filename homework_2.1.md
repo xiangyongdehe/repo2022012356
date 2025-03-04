@@ -1,4 +1,4 @@
-**##prepare**
+## prepare
 
 ```bash
 docker run -v /Users/xiangyongdehe/Desktop/test_command.gtf:/data/test_command.gtf xfliu1995/bioinfo_tsinghua:2 # 运行容器
@@ -14,7 +14,7 @@ chromosome_IV	ensembl	gene	762	3836	.	+	.	gene_id "YDL247W-A"; gene_version "1";
 chr_IV	ensembl	transcript	3762	836	.	+	.	gene_id "YDL247W-A"; gene_version "1"; # 输出行
 ```
 
-**##task 1**
+## task 1
 
 ```bash
 $ wc -l /data/test_command.gtf  # 输入：统计文件行数
@@ -23,7 +23,7 @@ $ wc -m /data/test_command.gtf  # 输入：统计文件字符数
 636 /data/test_command.gtf      # 输出：字符数结果
 ```
 
-**##task 2**
+## task 2
 
 ```bash
 $ grep -E '^chr_.*\bYDL248W\b' test_command.gtf # 输入：筛选并输出示例文件中以 chr_ 起始，并且基因id为 YDL248W 的行
@@ -34,7 +34,7 @@ chr_IV	ensembl	transcript	802	2953	.	+	.	gene_id "YDL248W"; gene_version "1";
 chr_IV	ensembl	start_codon	1802	1804	.	+	0	gene_id "YDL248W"; gene_version "1"; # 输出：筛选结果
 ```
 
-**##task 3**
+## task 3
 
 ```bash
 $ sed 's/chr_/chromosome_/g' /data/test_command.gtf | cut -f 1,3,4,5 # 将示例文件中的 chr_ 替换为 chromosome_ 并输出每行的第1，3，4，5列
@@ -48,7 +48,7 @@ chromosome_IV	gene	762	3836
 chromosome_IV	transcript	3762	836 # 输出替换结果
 ```
 
-**##task 4**
+## task 4
 
 ```bash
 $ awk 'BEGIN {OFS="\t"} {tmp=$2; $2=$3; $3=tmp; print}' /data/test_command.gtf | sort -k4,4n -k5,5n # 通过man命令以及更多的资料学习简单的 awk 命令，尝试互换示例文件的第2列和第3列，并且对输出结果利用 sort 命令依照第4和第5列数字大小排序，将最终结果输出到result.gtf文件中。
@@ -63,7 +63,7 @@ chr_IV	transcript	ensembl	3762	836	.	+	.	gene_id"YDL247W-A";	gene_version	"1"; #
 awk 'BEGIN {OFS="\t"} {tmp=$2; $2=$3; $3=tmp; print}' /data/test_command.gtf | sort -k4,4n -k5,5n > result.gtf # 将最终结果输出到result.gtf文件中
 ```
 
-**##task 5**
+## task 5
 
 ```bash
 $ ls -l /data/test_command.gtf # 查看文件的当前权限
