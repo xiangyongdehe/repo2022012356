@@ -1,11 +1,22 @@
 # homework 2.2 刘佳璐
+
+## prepare
+
+```bash
+docker run -it -v /Users/xiangyongdehe/Desktop/1.gtf:/data/test_command.gtf xfliu1995/bioinfo_tsinghua:2 /bin/bash
+# 运行容器
+test@7e81061505d9:~$ cd /home/test/linux
+test@7e81061505d9:~/linux$ ls
+1.gtf.gz  file
+# 查看文件
+```
+
 ## task 1:列出1.gtf文件中 XI 号染色体上的后 10 个 CDS （按照每个CDS终止位置的基因组坐标进行sort）
 
 ```bash
 gunzip /Desktop/1.gtf.gz
 # 解压文件
-docker run -it -v /Users/xiangyongdehe/Desktop/1.gtf:/data/test_command.gtf xfliu1995/bioinfo_tsinghua:2 /bin/bash
-# 运行容器
+
 grep -w "XI" 1.gtf | awk '$3== "CDS"' | sort -k5,5n | tail -n 10
 # 输入
 XI	ensembl	CDS	631152	632798	.	+	0	gene_id "YKR097W"; gene_version "1"; transcript_id "YKR097W"; transcript_version "1"; exon_number "1"; gene_name "PCK1"; gene_source "ensembl"; gene_biotype "protein_coding"; transcript_name "PCK1"; transcript_source "ensembl"; transcript_biotype "protein_coding"; protein_id "YKR097W"; protein_version "1";
@@ -21,7 +32,7 @@ XI	ensembl	CDS	661442	663286	.	+	0	gene_id "YKR106W"; gene_version "1"; transcri
 # 输出结果
 ```
 
-## 统计 IV 号染色体上各类 feature （1.gtf文件的第3列，有些注释文件中还应同时考虑第2列） 的数目，并按升序排列。
+## task 2: 统计 IV 号染色体上各类 feature （1.gtf文件的第3列，有些注释文件中还应同时考虑第2列） 的数目，并按升序排列。
 
 ```bash
 grep -w "IV" 1.gtf | awk '{print $2,$3}' | sort | uniq -c | sort -n
@@ -34,9 +45,44 @@ grep -w "IV" 1.gtf | awk '{print $2,$3}' | sort | uniq -c | sort -n
     933 ensembl exon
 # 输出结果
 ```
-## 寻找不在 IV 号染色体上的所有负链上的基因中最长的2条 CDS 序列，输出他们的长度。
+## task 3 寻找不在 IV 号染色体上的所有负链上的基因中最长的2条 CDS 序列，输出他们的长度。
 ```bash
-grep -v "IV" 1.gtf |awk  '$7=="-"&&'$3=="CDS"{ len=$5-$4 + 1 ;print len }' | sort -n | tail -n 2
 grep -v "IV" 1.gtf | awk '$7 == "-" && $3 == "CDS" { len = $5 - $4 + 1; print len }' | sort -n | tail -n 2
-## 寻找 XV 号染色体上长度最长的5条基因，并输出基因 id 及对应的长度。
-## 统计1.gtf列数
+# 输入
+12276
+14730
+# 输出结果
+```
+
+## task 4 寻找 XV 号染色体上长度最长的5条基因，并输出基因 id 及对应的长度。
+```bash
+grep -w "XV" 1.gtf | awk ' $3=="gene" { len = $5-$4+1; split($9,a,"\""); print a[2],len }' | sort -n -k2| tail -n 5
+grep -w "XV" 1.gtf | awk ' $3=="gene" { len = $5-$4+1; match($9, /gene_id "([^"]+)"/, a); print a[1], len }' | sort -n -k2 | tail -n 5
+???
+
+awk -F'\t' '
+>   $3 == "gene" && $1 == "XV" { 
+>     len = $5 - $4 + 1;
+>     if (match($9, /gene_id "[^"]+"/)) {  # 匹配 gene_id "XXXXX"
+>       gene_id = substr($9, RSTART+8, RLENGTH-9);  # 提取 "XXXXX"
+>       print gene_id, len;
+>     }
+>   }
+> ' 1.gtf | sort -n -k2 | tail -n5
+# 输入
+"YOR142W-B 5269
+"YOR192C-B 5314
+"YOR343W-B 5314
+"YOR396W 5391
+"YOL081W 9240
+# 输出结果
+```
+
+## task 5 统计1.gtf列数
+
+```bash
+head -n1 1.gtf | awk '{print NF}'
+# 输入
+9
+# 输出结果
+```
