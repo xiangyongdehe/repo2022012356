@@ -56,25 +56,13 @@ grep -v "IV" 1.gtf | awk '$7 == "-" && $3 == "CDS" { len = $5 - $4 + 1; print le
 
 ## task 4 寻找 XV 号染色体上长度最长的5条基因，并输出基因 id 及对应的长度。
 ```bash
-grep -w "XV" 1.gtf | awk ' $3=="gene" { len = $5-$4+1; split($9,a,"\""); print a[2],len }' | sort -n -k2| tail -n 5
-grep -w "XV" 1.gtf | awk ' $3=="gene" { len = $5-$4+1; match($9, /gene_id "([^"]+)"/, a); print a[1], len }' | sort -n -k2 | tail -n 5
-???
-
-awk -F'\t' '
->   $3 == "gene" && $1 == "XV" { 
->     len = $5 - $4 + 1;
->     if (match($9, /gene_id "[^"]+"/)) {  # 匹配 gene_id "XXXXX"
->       gene_id = substr($9, RSTART+8, RLENGTH-9);  # 提取 "XXXXX"
->       print gene_id, len;
->     }
->   }
-> ' 1.gtf | sort -n -k2 | tail -n5
+grep -w "XV" 1.gtf | awk ' $3=="gene" { len = $5-$4+1; split($10,a,"\""); print a[2],len }' | sort -n -k2| tail -n 5
 # 输入
-"YOR142W-B 5269
-"YOR192C-B 5314
-"YOR343W-B 5314
-"YOR396W 5391
-"YOL081W 9240
+YOR142W-B 5269
+YOR192C-B 5314
+YOR343W-B 5314
+YOR396W 5391
+YOL081W 9240
 # 输出结果
 ```
 
@@ -83,6 +71,10 @@ awk -F'\t' '
 ```bash
 head -n1 1.gtf | awk '{print NF}'
 # 输入
+2
+# 输出结果不理想
+awk -F'\t' '!/^#/{print NF; exit}' 1.gtf
+#因为GTF 文件通常有 9 列，使用制表符分隔。需要强制按制表符分隔并跳过注释行
 9
-# 输出结果
+#理想的输出结果
 ```
