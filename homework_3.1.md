@@ -1,6 +1,7 @@
-##  homework  参考和学习本章内容，写出一个 bash 脚本，可以使它自动读取一个文件夹（例如 bash_homework/）的内容，将该文件夹下文件的名字输出到 filenames.txt, 子文件夹的名字输出到 dirname.txt 。
+#  homework 
+## 参考和学习本章内容，写出一个 bash 脚本，可以使它自动读取一个文件夹（例如 bash_homework/）的内容，将该文件夹下文件的名字输出到 filenames.txt, 子文件夹的名字输出到 dirname.txt 。
 
-##编写脚本
+## 编写脚本
 ```bash
 xiangyongdehe@xiangyoehedeAir ~ % docker run -it -v ~/Desktop/bash_homework:/home/test/linux/bash_homework xfliu1995/bioinfo_tsinghua:2 /bin/bash
 WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
@@ -43,13 +44,13 @@ echo "Directory names have been saved to dirnames.txt."
 
 #按esc，并且输入：wq保存脚本
 ```
-##运行脚本
+## 运行脚本
 ```bash
 ./file.sh
 File names have been saved to filenames.txt.
 Directory names have been saved to dirnames.txt.
 ```
-##检查输出结果
+## 检查输出结果
 ```bash
 #查看文件
 cat filenames.txt
