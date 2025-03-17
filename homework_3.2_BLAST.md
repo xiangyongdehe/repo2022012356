@@ -1,6 +1,6 @@
-
+## bash脚本
 ```bash
-# bash脚本
+
 
 #!/bin/bash
 
@@ -33,6 +33,7 @@ done
 echo "All blast comparisons completed. Results saved in $OUTPUT_DIR."
 ```
 
+## bash结果文件
 ```bash
 
 # 输出结果文件
@@ -122,3 +123,13 @@ Sequence_9	Sequence_5	41.667	24	14	0	9	32	42	65	2.2	11.2
 Sequence_9	Sequence_5	41.176	17	10	0	33	49	45	61	9.3	 9.2
 Sequence_9	Sequence_8	57.143	14	6	0	56	69	10	23	0.43	13.1
 Sequence_9	Sequence_8	83.333	6	1	0	31	36	65	70	0.97	11.9
+
+```
+## 对结果的解释
+#### BLAST结果中的核心指标包括相似度百分比（pident）、期望值（evalue）和比对得分（bitscore）。对于随机打乱的序列，理论预期是低相似性（5-10%）和高e值（>0.05），但实际结果中出现了多个例外案例。例如，Sequence_4与Sequence_6的比对显示100%相似性（pident=100），但比对长度仅5个残基且e值=0.20。这种短片段完美匹配可能是随机化过程中残留的局部重复序列导致。
+#### Sequence_5 vs Sequence_3比对长度30残基（e=0.003）显示中度相似性（50%），可能因原始序列的某些结构域未被完全破坏。需验证序列生成算法是否充分打乱氨基酸顺序。
+#### BLAST默认参数对短序列敏感，如Sequence_7 vs Sequence_2比对长度6残基（e=0.75）属于假阳性。建议增加-task blastp-short参数过滤短片段干扰
+#### 该结果表明，即使经过随机化处理，某些序列特性（如短重复或固有结构）仍可能保留，这为理解蛋白质序列的随机性与功能约束提供了实证数据。
+
+
+
