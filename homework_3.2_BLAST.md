@@ -1,3 +1,5 @@
+
+```bash
 # bash脚本
 
 #!/bin/bash
@@ -29,6 +31,9 @@ for i in {1..10}; do
 done
 
 echo "All blast comparisons completed. Results saved in $OUTPUT_DIR."
+```
+
+```bash
 
 # 输出结果文件
 test@bioinfo_docker:~/blast/blast_results$ cat blast_result_*.txt
