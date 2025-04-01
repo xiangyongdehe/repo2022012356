@@ -11,16 +11,29 @@ kPa，测得半衰期为 1529 s；在 1030 K 时，N2O(g)的初始压力为 48.0
 **deepseek 207s** <img width="980" alt="Screenshot 2025-04-01 at 16 42 32" src="https://github.com/user-attachments/assets/17c00ac8-d33a-472d-abc9-6e48be549e2b" />
 **hunyuan 59s**<img width="940" alt="Screenshot 2025-04-01 at 16 42 55" src="https://github.com/user-attachments/assets/81f6eb17-87d4-468b-8147-2791de27d122" />
 
-#### case 2 电化学习题
+#### case 2 电化学习题中等
 **题目**
 【清华大学出版社物理化学教材习题】试用 Debey-Huckel 极限公式计算298K 时 0.001mol /kg的K3Fe（CN）6溶液。溶液的离子平均活度系数值（实验值为 0.808）
 **hunyuan 36s**  <img width="870" alt="Screenshot 2025-04-01 at 16 47 20" src="https://github.com/user-attachments/assets/2b1aa0aa-edb1-497a-9fe9-f6be6437fa09" />
-**deepseek 68s**<img width="1032" alt="Screenshot 2025-04-01 at 16 48 04" src="https://github.com/user-attachments/assets/dead0117-1e60-45e3-b515-6f2faac2b74f" />
+**deepseek 68s**  
+<img width="1032" alt="Screenshot 2025-04-01 at 16 48 04" src="https://github.com/user-attachments/assets/dead0117-1e60-45e3-b515-6f2faac2b74f" />
 
-#### case 3 
-**题目**Zn（s）|ZnCl（b=0.01021mol/kg）|AgCI|Ag 在298K 时的电动势为1.1566V。计算该 ZnCl 溶液中的离子平均活度系数值。  
+#### case 3 电化学习题偏难
+**题目**  
+Zn（s）|ZnCl（b=0.01021mol/kg）|AgCI|Ag 在298K 时的电动势为1.1566V。计算该 ZnCl 溶液中的离子平均活度系数值。  
 **deepseek 258s**
-<img width="1007" alt="Screenshot 2025-04-01 at 17 00 06" src="https://github.com/user-attachments/assets/f3e77765-8465-4043-b3a0-f5bdd97fbb95" />
+<img width="1007" alt="Screenshot 2025-04-01 at 17 00 06" src="https://github.com/user-attachments/assets/f3e77765-8465-4043-b3a0-f5bdd97fbb95" />  
+在深度思考的过程中，Deepseek的回答在解方程时出现了符号错误，导致Q值计算错误，进而使得后续的γ±计算错误。正确的Q应为1.35×10^-6，而非6.35×10^-6，因此最终γ±的正确值应为约0.68，但Deepseek的推导过程存在根本性错误，虽然后续改正过来了，但是结果不可靠。​逻辑断裂：Q值错误但后续计算仍得出正确结果，可能因数值误差抵消或步骤跳跃，降低可信度。
+**hunyuan 58s**   
+<img width="989" alt="Screenshot 2025-04-01 at 17 04 22" src="https://github.com/user-attachments/assets/c46da4a6-92db-4804-8964-854643221f9e" />  
+Huiyuan正确应用能斯特方程，计算步骤逻辑严谨，最终得出γ±≈0.68，结果合理。
+**标准答案**
+![image](https://github.com/user-attachmen![Uploading Screenshot 2025-04-01 at 17.32.01.png…]()
+ts/assets/4a94ab14-cf7a-4051-9b62-1752d9cb3afe)
+
+### 生物信息学
+#### case 1  
+<img width="1008" alt="Screenshot 2025-04-01 at 17 32 32" src="https://github.com/user-attachments/assets/99b2a530-b847-4b29-82e0-3b3458dcef1d" />
 
 ### 有机化学
 #### case 1 
