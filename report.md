@@ -12,9 +12,18 @@ kPa，测得半衰期为 1529 s；在 1030 K 时，N2O(g)的初始压力为 48.0
 **hunyuan 59s**<img width="940" alt="Screenshot 2025-04-01 at 16 42 55" src="https://github.com/user-attachments/assets/81f6eb17-87d4-468b-8147-2791de27d122" />
 
 #### case 2 电化学习题
-【清华大学出版社物理化学教材习题】
+**题目**
+【清华大学出版社物理化学教材习题】试用 Debey-Huckel 极限公式计算298K 时 0.001mol /kg的K3Fe（CN）6溶液。溶液的离子平均活度系数值（实验值为 0.808）
+**hunyuan 36s**  <img width="870" alt="Screenshot 2025-04-01 at 16 47 20" src="https://github.com/user-attachments/assets/2b1aa0aa-edb1-497a-9fe9-f6be6437fa09" />
+**deepseek 68s**<img width="1032" alt="Screenshot 2025-04-01 at 16 48 04" src="https://github.com/user-attachments/assets/dead0117-1e60-45e3-b515-6f2faac2b74f" />
+
+#### case 3 
+**题目**Zn（s）|ZnCl（b=0.01021mol/kg）|AgCI|Ag 在298K 时的电动势为1.1566V。计算该 ZnCl 溶液中的离子平均活度系数值。  
+**deepseek 258s**
+<img width="1007" alt="Screenshot 2025-04-01 at 17 00 06" src="https://github.com/user-attachments/assets/f3e77765-8465-4043-b3a0-f5bdd97fbb95" />
+
 ### 有机化学
-#### case 1
+#### case 1 
 #### case 2
 ### 无机化学
 #### case 1
