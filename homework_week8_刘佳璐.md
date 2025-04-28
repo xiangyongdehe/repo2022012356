@@ -125,4 +125,35 @@ cnetplot(kegg_result, categorySize="pvalue", foldChange=up_genes$logFC)
 ##### 输出的barplot图 ![image](https://github.com/user-attachments/assets/eb1ac9e3-d74d-41b0-9852-00e10d95d26b)
 
 #### **KO analysis VS KEGG analysis 结果比较**
-#####
+
+##### 1. 核心区别
+| ​**特征**       | ​**KEGG富集分析**            | ​**KO分析**                 |
+|----------------|-----------------------------|---------------------------|
+| 分析层次        | 通路水平                    | 基因功能模块水平           |
+| 输入ID类型      | ENTREZID/TAIR ID           | KO编号 (如K00001)          |
+| 富集单位        | 生物通路 (如代谢通路)        | 保守功能模块               |
+| 数据库来源      | KEGG PATHWAY               | KEGG ORTHOLOGY            |
+| 典型应用场景    | 发现整体通路变化            | 检测保守功能变化           |
+| 结果解读重点    | 通路激活/抑制               | 功能模块的进化保守性       |
+
+---
+
+##### 2. 方法实现对比
+
+###### KEGG分析
+```r
+# 基因ID转换
+gene_ids <- bitr(gene_symbols, fromType="TAIR", toType="ENTREZID", OrgDb="org.At.tair.db")
+
+# 富集分析
+kegg_result <- enrichKEGG(gene = gene_ids$ENTREZID, organism = "ath")
+```
+
+###### KO分析
+```r
+# 获取KO编号映射
+ko_mapping <- bitr(gene_symbols, fromType="TAIR", toType="KO", OrgDb="org.At.tair.db")
+
+# 富集分析
+ko_result <- enrichKO(gene = ko_mapping$KO, organism = "ath")
+```
