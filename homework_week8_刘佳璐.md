@@ -118,3 +118,11 @@ dotplot(kegg_result, showCategory=20)
 cnetplot(kegg_result, categorySize="pvalue", foldChange=up_genes$logFC)
 
 ```
+##### 结果csv文件在压缩包里
+
+##### 输出的dotplot图![image](https://github.com/user-attachments/assets/724fb184-c24b-4ab3-9bef-3b4badac3a6c)
+
+##### 输出的barplot图 ![image](https://github.com/user-attachments/assets/eb1ac9e3-d74d-41b0-9852-00e10d95d26b)
+
+#### **KO analysis VS KEGG analysis 结果比较**
+#####
