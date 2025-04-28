@@ -254,3 +254,146 @@ write.table(
 )
 
 ```
+### 结果txt文件在zip里
+
+# 4.对于uvr8突变型的差异基因，定义|log2FC|>1，FDR<0.05的基因为差异表达基因。比较两个软件得到的差异基因有多少是重合的，有多少是不同的，用venn图的形式展示
+```r
+# 加载必要的包
+library(DESeq2)
+library(edgeR)
+library(VennDiagram)
+# 1. 数据准备（假设count_data和sample_info已加载）
+uvr8_samples <- grep("^UD", colnames(count_data), value = TRUE)
+count_uvr8 <- count_data[, uvr8_samples]
+sample_info_uvr8 <- sample_info[uvr8_samples, ]
+#  2. DESeq2分析
+dds <- DESeqDataSetFromMatrix(countData = count_uvr8,
+                              colData = sample_info_uvr8,
+                              design = ~ condition)
+dds <- DESeq(dds)
+deseq2_res <- results(dds, contrast = c("condition", "light", "dark"))
+# 3. edgeR分析
+y <- DGEList(counts = count_uvr8, group = sample_info_uvr8$condition)
+y <- calcNormFactors(y)
+design <- model.matrix(~ condition, data = sample_info_uvr8)
+y <- estimateDisp(y, design)
+fit <- glmQLFit(y, design)
+qlf <- glmQLFTest(fit, coef = 2)
+edger_res <- topTags(qlf, n = Inf)$table
+# 4. 提取显著差异基因
+deseq2_sig <- rownames(deseq2_res)[abs(deseq2_res$log2FoldChange) > 1 & 
+                                     deseq2_res$padj < 0.05 & 
+                                     !is.na(deseq2_res$padj)]
+
+edger_sig <- rownames(edger_res)[abs(edger_res$logFC) > 1 & 
+                                   edger_res$FDR < 0.05 & 
+                                   !is.na(edger_res$FDR)]
+# 5. 统计结果
+common_genes <- intersect(deseq2_sig, edger_sig)
+deseq2_only <- setdiff(deseq2_sig, edger_sig)
+edger_only <- setdiff(edger_sig, deseq2_sig)
+
+# 6. 绘制Venn图
+library(VennDiagram)
+
+# 输入数据
+deseq2_total <- 99
+edger_total <- 50
+overlap <- 36
+
+# 计算特有基因数
+deseq2_only <- deseq2_total - overlap  # 99-36=63
+edger_only <- edger_total - overlap    # 50-36=14
+
+# 绘制韦恩图
+venn.plot <- draw.pairwise.venn(
+  area1 = deseq2_total,    # DESeq2总基因数 (99)
+  area2 = edger_total,     # edgeR总基因数 (50)
+  cross.area = overlap,   # 重合基因数 (36)
+  category = c("DESeq2", "edgeR"),
+  fill = c("#1f78b4", "#e31a1c"),  # 蓝色和红色
+  alpha = 0.6,
+  lty = "blank",
+  cex = 1.5,              # 数字大小
+  cat.cex = 1.5,          # 类别标签大小
+  cat.pos = c(-30, 30),   # 标签位置（角度）
+  cat.dist = 0.05,        # 标签距离圆圈的距离
+  margin = 0.1,
+  print.mode = "raw"      # 显示实际数字
+)
+
+# 保存为高清PNG（600 dpi）
+png("DEGs_Venn_uvr8.png", width = 2000, height = 2000, res = 300)
+grid.draw(venn.plot)
+dev.off()
+```
+
+![image](https://github.com/user-attachments/assets/c7cca2da-c427-46ea-ab57-b4702d121854)
+
+# 5.对于edgeR找出的FDR<0.05的基因，选出log2FoldChange最大的10个基因和最小的10个基因。计算原始表达量矩阵的log10CPM值并对每个基因进行Z-score处理，使用刚才筛选出来的20个基因绘制热图（heatmap）作为最后结果输出。
+
+```r
+library(edgeR)
+library(gplots)
+library(RColorBrewer)
+
+# 1. 数据准备 ----------------------------------------------------------------
+# 假设已进行edgeR分析并得到edger_res结果
+# 筛选FDR<0.05的显著基因
+sig_genes <- edger_res[edger_res$FDR < 0.05 & !is.na(edger_res$FDR), ]
+
+# 2. 选择logFC最大和最小的各10个基因 ----------------------------------------
+top_10_up <- head(sig_genes[order(sig_genes$logFC, decreasing = TRUE), ], 10)
+top_10_down <- head(sig_genes[order(sig_genes$logFC, decreasing = FALSE), ], 10)
+selected_genes <- rbind(top_10_up, top_10_down)
+
+# 3. 计算log10CPM并进行Z-score标准化 ---------------------------------------
+# 假设y是已创建的DGEList对象（包含标准化因子）
+logcpm <- cpm(y, log = TRUE, prior.count = 1)  # 计算log10CPM
+logcpm_selected <- logcpm[rownames(selected_genes), ]
+
+# Z-score标准化（按行）
+zscore_matrix <- t(scale(t(logcpm_selected)))
+
+# 4. 准备热图注释 ----------------------------------------------------------
+# 假设sample_info_uvr8包含condition列（light/dark）
+condition_colors <- ifelse(sample_info_uvr8$condition == "light", "gold", "darkblue")
+
+# 5. 绘制红蓝经典热图 ------------------------------------------------------
+pdf("edgeR_top20_genes_heatmap.pdf", width = 8, height = 10)
+
+heatmap.2(
+  zscore_matrix,
+  col = colorRampPalette(rev(brewer.pal(9, "RdBu")))(100),  # 红蓝渐变色
+  scale = "none",          # 已做Z-score无需再缩放
+  trace = "none",         # 关闭trace线
+  margins = c(10, 12),     # 下边距10，左边距12
+  ColSideColors = condition_colors,  # 样本分组颜色条
+  dendrogram = "row",     # 仅对基因聚类
+  Rowv = TRUE,            # 对行聚类
+  Colv = FALSE,           # 不对列聚类
+  cexRow = 0.8 + 1/log10(nrow(zscore_matrix)),  # 自适应行标签大小
+  cexCol = 0.8 + 1/log10(ncol(zscore_matrix)),  # 自适应列标签大小
+  key = TRUE,             # 显示颜色标尺
+  keysize = 1,            # 标尺大小
+  density.info = "none",  # 关闭密度图
+  main = "Top 20 DEGs in uvr8 (log10CPM Z-scores)",  # 标题
+  labCol = sub("_", "\n", colnames(zscore_matrix))  # 处理样本名中的下划线
+)
+
+# 添加图例
+legend("topright",
+       legend = c("Light", "Dark"),
+       fill = c("gold", "darkblue"),
+       border = NA,
+       bty = "n",
+       cex = 0.8)
+
+dev.off()
+
+_____
+
+```
+## 热图结果
+
+<img width="793" alt="Screenshot 2025-04-28 at 22 53 21" src="https://github.com/user-attachments/assets/cdc99989-8c69-4b7a-8711-c9c30e224384" />
