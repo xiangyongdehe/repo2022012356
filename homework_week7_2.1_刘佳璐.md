@@ -111,10 +111,133 @@ $$
 | ​**CPM**           | 长度相近的RNA（如miRNA）快速分析  | edgeR, limma   |
 
 
-# 2.根据下述图片描述，填出对应选项:
+# 2.根据下述图片描述，填出对应选项: E B C
 
 # 3.通过软件计算，判断给出文件shape02数据是来自哪一种sequencing protocols （strand nonspecific, strand specific - forward, strand specific - reverse)，并选择合适的参数计算shape02的read count matrix，给出AT1G09530基因(PIF3基因)上的counts数目。
+```bash
+#  进入 Docker 容器
+docker exec -it bioinfo_featurecount /bin/bash
+cd /home/test
+/usr/local/bin/infer_experiment.py -r GTF/Arabidopsis_thaliana.TAIR10.34.bed -i bam/shape02.bam
+```
+#### 这两个分数接近相等(47.69% vs 49.16%)，说明数据是strand nonspecific​（非链特异性）测序
+
+```bash
+#计算 Read Count Matrix
+/home/software/subread-2.0.3-source/bin/featureCounts \
+  -T 4 \               # 使用 4 个线程
+  -s 0 \               # 非链特异性（strand nonspecific）
+  -p \                 # 针对 paired-end 数据
+  -a GTF/Arabidopsis_thaliana.TAIR10.34.gtf \  # 注释文件
+  -o /home/test/result/shape02_counts.txt \    # 输出路径
+  bam/shape02.bam
+# 提取 AT1G09530 (PIF3) 的 Counts
+grep "AT1G09530" /home/test/result/shape02_counts.txt
+```
+#### 输出结果是
+```bash
+AT1G09530       1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1   3075768;3075768;3075768;3076401;3076401;3076401;3076459;3076459;3076459;3077173;3077173;3077173;3077173;3077378;3077378;3077378;3077378;3077378;3077378;3078346;3078346;3078346;3078346;3078346;3078346;3078545;3078545;3078545;3078545;3078545;3078545;3078843;3078843;3078843;3078843;3078843;3078843;3078984;3078984;3078984;3078984;3078984;3078984 3075852;3075852;3075852;3077286;3076808;3076748;3076808;3077286;3076748;3077286;3077286;3077286;3077286;3078257;3078257;3078257;3078257;3078257;3078257;3078453;3078453;3078453;3078453;3078453;3078453;3078610;3078610;3078610;3078610;3078610;3078610;3078908;3078908;3078908;3078908;3078908;3078908;3079544;3079544;3079544;3079654;3079654;3079654 +;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+;+   2762    86
+```
+
+#### counts数目为：2762
 
 #  4. tumor-transcriptome-demo.tar.gz提供了结肠癌(COAD)，直肠癌(READ)和食道癌(ESCA)三种癌症各50个样本的bam文件用featureCount计算产生的结果。请大家编写脚本将这些文件中的counts合并到一个矩阵中(行为基因，列为样本), 计算logCPM的Z-score，并用 heatmap 展示，提供代码和heatmap。根据heatmap可视化的结果，你认为这三种癌症中哪两种癌症的转录组是最相似的?
+```r
+# 设置工作目录
+setwd("~/Desktop/tumor-transcriptome-demo")
 
+# 获取所有子目录中的.txt文件路径
+files <- list.files(path = c("COAD", "ESCA", "READ"), 
+                    pattern = "\\.txt$",
+                    full.names = TRUE,
+                    recursive = TRUE)
+
+# 检查文件数量是否正确
+if(length(files) != 150) warning(paste("找到", length(files), "个文件，预期150个"))
+
+# 创建读取单个文件的函数
+read_count_file <- function(file){
+  # 读取数据，跳过注释行
+  data <- read.table(file, header = TRUE, skip = 1)
+  
+  # 提取样本ID（从文件名）
+  sample_id <- gsub(".txt$", "", basename(file))
+  
+  # 获取count列（通常是最后一列）
+  count_col <- ncol(data)
+  
+  # 返回两列数据框
+  data.frame(
+    Geneid = data$Geneid,
+    Count = data[, count_col],
+    stringsAsFactors = FALSE
+  )
+}
+
+# 并行读取所有文件（加快速度）
+library(parallel)
+count_list <- mclapply(files, read_count_file, mc.cores = detectCores())
+
+# 给列表元素命名（使用样本ID）
+names(count_list) <- gsub(".txt$", "", basename(files))
+
+# 合并所有数据
+merged_counts <- Reduce(
+  function(x, y) merge(x, y, by = "Geneid", all = TRUE),
+  count_list
+)
+
+# 转换为count矩阵
+rownames(merged_counts) <- merged_counts$Geneid
+count_matrix <- as.matrix(merged_counts[, -1])  # 移除Geneid列
+colnames(count_matrix) <- names(count_list)
+
+# 处理NA值（RNA-seq中通常将NA替换为0）
+count_matrix[is.na(count_matrix)] <- 0
+
+# 检查矩阵维度
+dim(count_matrix)
+
+library(edgeR)
+
+# 创建DGEList对象
+dge <- DGEList(counts = count_matrix)
+
+# 计算CPM并取log2
+logcpm <- cpm(dge, log = TRUE)
+
+# 计算Z-score
+z_score <- t(scale(t(logcpm)))
+
+library(pheatmap)
+
+# 创建样本分组信息
+sample_groups <- data.frame(
+  CancerType = factor(rep(c("COAD", "READ", "ESCA"), each = 50)),
+  row.names = colnames(z_score)
+)
+
+# 绘制热图
+pheatmap(z_score,
+         show_rownames = FALSE,
+         show_colnames = FALSE,
+         annotation_col = sample_groups,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         clustering_method = "complete",
+         main = "Z-score of logCPM values",
+         color = colorRampPalette(c("blue", "white", "red"))(50))
+
+# 保存PNG
+
+png("heatmap.png", width=1200, height=1000, res=150)
+pheatmap(z_score,
+         show_rownames = FALSE,
+         show_colnames = FALSE,
+         annotation_col = sample_groups,
+         main = "Z-score of logCPM values")
+dev.off()
+
+```
+![heatmap](https://github.com/user-attachments/assets/7672713f-86f9-4b56-87a4-92eb7f0a1baa)
 
