@@ -74,7 +74,9 @@ findPeaks ip_tagdir -style factor -i input_tagdir -o peaks0.txt
   ls -lh motif_output0 \
 ```
 ##### 输出结果
-<img width="1257" alt="Screenshot 2025-05-05 at 19 52 29" src="https://github.com/user-attachments/assets/fbbed719-4704-4bb9-9a0b-5371fea3ca7d" />
+<img width="1109" alt="Screenshot 2025-05-05 at 20 46 36" src="https://github.com/user-attachments/assets/d1b8f254-f6be-4da4-a9b4-861e1bc2ba10" />
+
+
 其中Fold Change (vs Control) >=8且p-value (vs Control) < 10的−8次方的peaks
 <img width="1283" alt="Screenshot 2025-05-05 at 19 52 43" src="https://github.com/user-attachments/assets/4b8102d0-aa6d-4c83-8569-5dc98f40ca6a" />
 
