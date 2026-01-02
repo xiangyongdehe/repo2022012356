@@ -481,3 +481,195 @@ infercnv_ET1 <- infercnv::run(
 
 list.files("infercnv_ET1")
 ```
+
+### untitled 9 用t细胞做baseline的流程备份
+```r
+library(Seurat)
+library(Matrix)
+library(ggplot2)  # 绘制图形的包
+library(Rtsne)    # 如果需要 tSNE 支持
+library(umap)  
+# 确保身份是 seurat_clusters
+obj <- readRDS("ESCC.tiss.tsne.umap.integrated.3.rds")
+Idents(obj) <- "seurat_clusters"
+head(obj@meta.data)
+# 绘制 t-SNE 图，按分群结果显示
+DimPlot(obj, group.by = "type", reduction = "tsne")
+
+# 只取 ET2 的上皮和 T 细胞，假设ET2在seurat_clusters为0、2、3为上皮，1为T细胞
+obj_ET6 <- subset(
+  obj,
+  subset = id == "ET6" & seurat_clusters %in% c(0, 2, 3, 1)
+)
+
+# 查看上皮和T细胞数量
+epi_ET6 <- WhichCells(obj_ET6, expression = seurat_clusters %in% c(0, 2, 3))  # 上皮
+t_cells_ET6 <- WhichCells(obj_ET6, expression = seurat_clusters == 1)          # T细胞
+length(epi_ET6) 
+length(t_cells_ET6) 
+
+# 随机选择 ET2 的 20% T细胞作为基准
+set.seed(1)
+T_ref_ET6 <- sample(t_cells_ET6, size = max(30, floor(0.20 * length(t_cells_ET6))))  # 20% 作为基准
+T_obs_ET6 <- setdiff(t_cells_ET6, T_ref_ET6)  # 剩下的 80% T细胞作为观察组
+
+# 确认剩下的 T 细胞数量
+length(T_ref_ET6)
+length(T_obs_ET6)
+
+# 选择 counts 数据
+counts_ET6 <- GetAssayData(obj_ET6, assay = "RNA", slot = "counts")
+counts_ET6 <- as(counts_ET6, "dgCMatrix")
+
+# 创建anno文件，ET2 上皮细胞和 T_obs、T_ref 区分开来
+anno_ET6 <- data.frame(
+  cell_name = colnames(counts_ET6),
+  group = ifelse(colnames(counts_ET6) %in% T_ref_ET6, "T_ref", 
+                 ifelse(colnames(counts_ET6) %in% T_obs_ET6, "T_obs", "Epi_obs")),
+  stringsAsFactors = FALSE
+)
+
+# 查看基准和观察组的分配
+table(anno_ET6$group)
+
+# 保存anno文件
+write.table(
+  anno_ET6,
+  file = "anno_ET6_Tref_Tobs_epi.txt",
+  sep = "\t",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = FALSE
+)
+
+
+
+# 使用infercnv包来进行分析
+.libPaths("/ifs1/User/ljl/.conda/envs/infercnv114/lib/R/library")
+library(infercnv)
+
+# 创建infercnv对象
+infercnv_ET6 <- CreateInfercnvObject(
+  raw_counts_matrix = counts_ET6,
+  annotations_file  = "anno_ET6_Tref_Tobs_epi.txt",
+  gene_order_file   = "gene_order_gencodev21_SYMBOL.unique.txt",
+  ref_group_names   = "T_ref"  # 使用ET2 T细胞的 20% 作为基准
+)
+
+
+
+# 3. 用你的参数重新运行
+infercnv_ET6 <- infercnv::run(
+  infercnv_ET6,
+  cutoff = 0.1,
+  out_dir = "infercnv_ET6_Tref_Tobs_epi",
+  cluster_by_groups = FALSE,
+  denoise = FALSE,
+  HMM = FALSE,
+  num_threads = 4,
+  analysis_mode = "cells"
+)
+
+
+
+
+========
+  
+  
+  
+=========
+  library(ape)
+library(Seurat)
+
+# 假设你有多个 Seurat 对象：obj_ET1 到 obj_ET8
+obj_list <- list(obj_ET1, obj_ET2, obj_ET3, obj_ET4, obj_ET5, obj_ET6, obj_ET7, obj_ET8)  # 你可以根据实际情况修改
+
+# 逐个处理每个 obj_ET
+for (obj_ET in obj_list) {
+  # 根据 obj_ET 的 id 动态生成文件路径
+  dendrogram_file <- paste0("infercnv_", obj_ET$id, "_Tref_Tobs_epi/infercnv.observations_dendrogram.txt")
+  
+  # 读取 Newick 格式的树
+  tree <- read.tree(text = readLines(dendrogram_file))
+  
+  # 将 phylo 对象转换为 hclust 对象
+  hclust_tree <- as.hclust(tree)
+  
+  # 进行切割，分为 2 类
+  clusters <- cutree(hclust_tree, k = 2)
+  
+  # 确保 clusters 和 Seurat 对象的细胞顺序一致
+  clusters <- clusters[match(colnames(obj_ET), names(clusters))]
+  
+  # 将聚类结果添加到 Seurat 对象
+  obj_ET$cnv_status <- as.factor(clusters)  # 将聚类结果作为新的元数据字段添加
+  
+  # 查看 Seurat 对象的元数据
+  head(obj_ET@meta.data)
+}
+
+
+  ================
+  library(ape)
+
+# 读取 Newick 格式的树
+tree <- read.tree(text = readLines("infercnv_ET6_Tref_Tobs_epi/infercnv.observations_dendrogram.txt"))
+
+# 绘制树
+plot(tree)
+
+# 将 phylo 对象转换为 hclust 对象
+hclust_tree <- as.hclust(tree)
+
+# 进行切割，分为 2 类
+clusters6 <- cutree(hclust_tree, k = 2)
+
+# 查看聚类结果
+table(clusters6)
+
+head(obj_ET5@meta.data)
+
+
+
+-------------
+# 将 clusters3 按照 obj_ET3 的细胞名顺序重新排序
+clusters3 <- clusters3[match(colnames(obj_ET3), names(clusters3))]
+
+# 检查顺序是否一致
+identical(colnames(obj_ET3), names(clusters3))  # 应该返回 TRUE
+
+# 重命名 clusters3，使其与 obj_ET3 的细胞名一致
+names(clusters3) <- colnames(obj_ET3)
+
+# 检查顺序是否一致
+identical(colnames(obj_ET3), names(clusters3))  # 现在应该返回 TRUE
+
+# 检查 NA 值
+sum(is.na(clusters3))  # 确保 NA 值已处理
+
+# 如果有 NA 值，替换为默认值（如 0 或 1）
+clusters3[is.na(clusters3)] <- 0  # 或者替换为其他默认值
+# 将聚类结果添加到 Seurat 对象
+obj_ET3$cnv_status <- as.factor(clusters3)  # 将聚类结果作为因子类型添加
+
+# 检查 Seurat 对象的元数据，确认添加是否成功
+head(obj_ET3@meta.data)
+=====
+library(ggplot2)  # 绘制图形的包
+library(Rtsne)    # 如果需要 tSNE 支持
+library(umap)     # 如果需要 UMAP 支持
+# 找到哪些细胞的 cnv_status 为 NA
+cells_with_na <- which(is.na(obj_ET3$cnv_status))  # 获取包含 NA 的细胞索引
+
+# 使用 WhichCells 来选择非 NA 的细胞
+cells_to_keep <- WhichCells(obj_ET3, expression = !is.na(cnv_status))  # 保留那些有 cnv_status 的细胞
+
+# 创建一个新的 Seurat 对象，只保留有 cnv_status 的细胞
+obj_ET3_clean <- subset(obj_ET3, cells = cells_to_keep)
+
+# 检查清理后的对象，确保细胞数量一致
+length(obj_ET3_clean$cnv_status) == length(colnames(obj_ET3_clean))  # 应该返回 TRUE
+
+# 绘制 tSNE 图
+DimPlot(obj_ET2_clean, group.by = "cnv_status", reduction = "tsne")
+```
